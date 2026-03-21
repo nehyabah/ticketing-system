@@ -59,4 +59,9 @@ public class Event {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
+
+    public void addSeat(Seat seat) {
+        seats.add(seat);
+        seat.setEvent(this);
+    }
 }

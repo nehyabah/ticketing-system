@@ -29,4 +29,33 @@ public class Seat {
         this.price = price;
         this.status = SeatStatus.AVAILABLE;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getSeatNumber() {
+        return seatNumber;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public SeatStatus getStatus() {
+        return status;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setStatus(SeatStatus status) { this.status = status; }
+    public void setEvent(Event event) { this.event = event; }
+    public void setSeatNumber(String seatNumber) { this.seatNumber = seatNumber; }
+    public void setPrice(double price) { this.price = price; }
 }
