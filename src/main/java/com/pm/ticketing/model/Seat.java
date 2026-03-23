@@ -1,6 +1,7 @@
 package com.pm.ticketing.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 @Entity
 public class Seat {
@@ -29,6 +30,10 @@ public class Seat {
         this.price = price;
         this.status = SeatStatus.AVAILABLE;
     }
+
+    public Seat(String seatNumber, @Min(value = 1, message = "Price must be at least 1") double v) {
+    }
+
 
     public Long getId() {
         return id;
