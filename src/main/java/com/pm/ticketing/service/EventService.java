@@ -48,6 +48,18 @@ public class EventService {
         return eventRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Event not found"));
     }
 
+    public EventResponse getEventById(Long id){
+        Event event = findEventOrThrow(id);
+        return toResponse(event);
+    }
+
+    public List<SeatResponse> getSeatsForEvent(Long eventId){
+        findEventOrThrow(eventId);
+        return seatRepository.findByEventId(eventId).stream()
+                .map(this::toSeatResponse)
+                .toList();
+    }
+
     private EventResponse toResponse(Event event) {
         long available = seatRepository.countByEventIdAndStatus(
                 event.getId(), SeatStatus.AVAILABLE
@@ -62,7 +74,7 @@ public class EventService {
         );
     }
 
-    private SeatResponse Seat(Seat seat) {
+    private SeatResponse toSeatResponse(Seat seat) {
         return new SeatResponse(
                 seat.getId(),
                 seat.getSeatNumber(),
