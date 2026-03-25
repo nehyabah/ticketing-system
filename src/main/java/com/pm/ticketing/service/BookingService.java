@@ -2,9 +2,11 @@ package com.pm.ticketing.service;
 
 import com.pm.ticketing.dto.BookingRequest;
 import com.pm.ticketing.dto.BookingResponse;
+import com.pm.ticketing.exception.InsufficientBalanceException;
 import com.pm.ticketing.exception.ResourceNotFoundException;
 import com.pm.ticketing.model.Booking;
 import com.pm.ticketing.model.Seat;
+import com.pm.ticketing.model.SeatStatus;
 import com.pm.ticketing.model.User;
 import com.pm.ticketing.repository.BookingRepository;
 import com.pm.ticketing.repository.EventRepository;
@@ -47,6 +49,26 @@ public class BookingService {
                 .orElseThrow(()-> new ResourceNotFoundException("Seat Not Found with id: " + request.seatId()));
 
         //CHECK SEAT IS AVAILABLE
+        if (seat.getStatus() != SeatStatus.AVAILABLE) {
+            throw new ResourceNotFoundException("Seat " + seat.getSeatNumber() + " is already booked");
+        }
+
+        //Check If User Has Enough Money
+        if(user.getWalletBalance() < seat.getPrice()){
+            throw new InsufficientBalanceException(
+                    "Insufficient balance. Need: " + seat.getPrice() +
+                            ", Have: " + user.getWalletBalance());
+        }
+        // 6. DEDUCT FROM WALLET
+        user.setWalletBalance(user.getWalletBalance() - seat.getPrice());
+        userRepository.save(user);
+        // 7. MARK SEAT AS BOOKED
+        seat.setStatus(SeatStatus.BOOKED);
+        seatRepository.save(seat);
+
+        // 8. CREATE BOOKING RECORD
+        Booking booking = new Booking(request.idempotencyKey(), user, seat);
+        Booking saved = bookingRepository.save(booking);
 
 
 
