@@ -67,7 +67,7 @@ public class BookingService {
         seatRepository.save(seat);
 
         // 8. CREATE BOOKING RECORD
-        Booking booking = new Booking(request.idempotencyKey(), user, seat);
+        Booking booking = new Booking(request.idempotencyKey(), seat, user);
         Booking saved = bookingRepository.save(booking);
 
 
